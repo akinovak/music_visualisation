@@ -6,11 +6,6 @@ algoritma.
 
 Podaci korisceni u radu preuzeti su sa:
 https://www.researchgate.net/figure/Relations-between-liking-for-musical-genres-in-the-N332-participants-screened-for-the_fig1_330110820
-
-Student: Jelisaveta Smiljanic
-Broj indeksa: 138/2016
-Predmet: Vestacka inteligencija
-Profesor: Predrag Janicic
 """
 import random
 import numpy 
@@ -20,7 +15,6 @@ import matplotlib.transforms as mtransforms
 import matplotlib.pyplot as plot
 import warnings
 
-#Da bismo izbegli upozorenje pri iscrtavanju
 warnings.filterwarnings("ignore")
 
 
@@ -39,10 +33,6 @@ class GeneticAlgorithm:
     def __init__(self, matrix):
 
         self.matrix = matrix       
-        
-        #Eksperimentalno odredjeni parametri
-        #Bez obzira na vrednosti parametara
-        #Algoritam ne vraca gresku(fitness) manju od 24
         self.generation_size = 5000            
         self.chromosome_size = len(matrix)     
         self.reproduction_size = 2000              
@@ -51,10 +41,6 @@ class GeneticAlgorithm:
         self.tournament_size = 50             
         
         self.selection_type = 'tournament'      
-
-    #Prilagodjenost izracunavamo sabirajuci kvadratne razlike
-    #Korelacije svaka dva zanra (date u tabeli) i 
-    #Kosinusa ugla (koji ta dva zanra zaklapaju)
     def calculate_fitness(self, gene):
 
     	sum_fitness = 0
@@ -63,15 +49,11 @@ class GeneticAlgorithm:
 
     		for j in range(i+1, len(self.matrix)):
 
-    			#Ugao koji dva zanra zaklapaju
     			degree = gene[i] - gene[j]
     			sum_fitness = sum_fitness + (self.matrix[i][j] - math.cos(degree*math.pi/180))**2
 
     	return sum_fitness
 
-    #Kreiramo pocetnu populaciju dodeljujuci genima
-    #Nasumicne vrednosti u krugu na kojima ce se 
-    #Zanrovi nalaziti
     def initial_population(self):
 
     	init_population = []
@@ -104,12 +86,7 @@ class GeneticAlgorithm:
                 selected.append(self.tournament_selection(chromosomes))
           
         return selected
-    
-    #Ruletska selekcija, u ovom slucaju, davace nam
-    #Losije rezultate nego turnirska selekcija
-    #Jer ce jedinke koje prouzrokuju manju gresku
-    #Samim tim imati manju vrednost funkcije prilagodjenosti
-    #Pa ce tako i verovatnoca da budu izabrane biti manja
+   
     def roulette_selection(self, chromosomes):
         
         total_fitness = sum([chromosome.fitness for chromosome in chromosomes])
@@ -122,8 +99,7 @@ class GeneticAlgorithm:
 
             if current_sum > selected_value:
                 return chromosomes[i]
-
-    #Najbolja jedinka je ona koja pravi najmanju gresku(ima najmanji fitness)
+	
     def tournament_selection(self, chromosomes):
         
         selected = random.sample(chromosomes, self.tournament_size)
@@ -185,10 +161,6 @@ class GeneticAlgorithm:
         
         return (child1, child2)
         
-    #Ukoliko se u iteraciji dobija greska manja od 
-    #Trenutno najmanje, ispisuje se broj iteracije i nova najmanja greska
-    #Ukoliko algoritam kroz 10 iteracija ne uspe da popravi
-    #Prilagodjenost(fitness), tj. smanji gresku, program se zavrsava
     def optimize(self):
 
     	best_result = 10000
@@ -222,7 +194,6 @@ class GeneticAlgorithm:
             
 def main():
 
-	#Ucitavamo podatke o korelaciji muzickih zanrova
 	matrix = pd.read_csv("musical-genres.csv", sep = ",", header=None)
 	matrix = numpy.array(matrix)
 
@@ -232,13 +203,9 @@ def main():
 	
 	print('Result: {}'.format(result))
 
-	#Vizuelni prikaz rezultata algoritma
-	#Pronadjeno na internetu i modifikovano za potrebe programa
 	radian = numpy.zeros(len(result.gene))
 	radius = 1
 
-	#Da bismo pomocu legende znali gde se koji zanr 
-	#Nalazi na krugu i kojom bojom je predstavljen
 	labels = ["Metal", "Blues", "Classical", "Contemporary", "Electro", "Folk",
 			  "Jazz", "Pop", "Rap", "Religious", "Rock", "Soul", "Variety", "World"]
 
